@@ -27,6 +27,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Debug CodeDeploy
+        run: |
+          aws sts get-caller-identity
+
+          aws deploy get-deployment-group \
+            --application-name "$CODE_DEPLOY_APP_NAME" \
+            --deployment-group-name "$CODE_DEPLOY_GROUP_NAME" \
+            --region "$AWS_REGION"
+            
       # 2. ECR 로그인
       - name: Login to Amazon ECR
         id: login-ecr
@@ -68,12 +77,3 @@ jobs:
             --deployment-group-name ${{ env.CODE_DEPLOY_GROUP_NAME }} \
             --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=bundle-${{ github.sha }}.zip,bundleType=zip \
             --region ${{ env.AWS_REGION }}
-
-      - name: Debug CodeDeploy
-        run: |
-          aws sts get-caller-identity
-
-          aws deploy get-deployment-group \
-            --application-name "$CODE_DEPLOY_APP_NAME" \
-            --deployment-group-name "$CODE_DEPLOY_GROUP_NAME" \
-            --region "$AWS_REGION"
