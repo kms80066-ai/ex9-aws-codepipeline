@@ -29,13 +29,37 @@ jobs:
 
       - name: Debug CodeDeploy
         run: |
-          aws sts get-caller-identity
+          echo "=== 1. Secret 값 비교 ==="
+
+          if [ "$AWS_REGION" = "ca-central-1" ]; then
+            echo "Region: MATCH"
+          else
+            echo "Region: MISMATCH"
+          fi
+
+          if [ "$CODE_DEPLOY_APP_NAME" = "std09-ex-asg-codedeploy-app" ]; then
+            echo "Application: MATCH"
+          else
+            echo "Application: MISMATCH"
+          fi
+
+          if [ "$CODE_DEPLOY_GROUP_NAME" = "std09-ex-asg-deployment-group" ]; then
+            echo "Deployment Group: MATCH"
+          else
+            echo "Deployment Group: MISMATCH"
+          fi
+
+          echo "=== 2. 실제 리소스 조회 ==="
 
           aws deploy get-deployment-group \
-            --application-name "$CODE_DEPLOY_APP_NAME" \
-            --deployment-group-name "$CODE_DEPLOY_GROUP_NAME" \
-            --region "$AWS_REGION"
-            
+            --application-name "std09-ex-asg-codedeploy-app" \
+            --deployment-group-name "std09-ex-asg-deployment-group" \
+            --region ca-central-1 \
+            --query "deploymentGroupInfo.deploymentGroupName" \
+            --output text > /dev/null
+
+          echo "AWS Deployment Group: FOUND"
+
       # 2. ECR 로그인
       - name: Login to Amazon ECR
         id: login-ecr
