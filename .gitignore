@@ -35,6 +35,10 @@ crash.log
 *.tfvars
 !*.tfvars.example
 .terraform.lock.hcl
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 
 # === 기타 ===
 .aws/             # Git 버전 관리
